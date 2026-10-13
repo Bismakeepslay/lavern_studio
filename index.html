@@ -1,8 +1,14 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Lavern Studio: auto trace gambar SVG/PNG/JPG menjadi proyek XML untuk Alight Motion.">
 <title>Lavern Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <style>
 /* Layout: workbench. Settings rail on the left, artboard stage + layer stack + export bar on the right.
    Stage comes first on phones. Palette: lilac-tinted paper, ink, iris (interactive), apricot (anchor points only). */
@@ -137,7 +143,8 @@ details.how li b{color:var(--fg)}
 @keyframes sp{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.spin{animation:none}.bar i{transition:none}}
 </style>
-
+</head>
+<body>
 <div class="shell">
   <header class="top">
     <a class="brand" href="#" aria-label="Lavern Studio">
@@ -248,15 +255,18 @@ details.how li b{color:var(--fg)}
               <button class="chip" type="button" data-preset="siluet" aria-pressed="false">Siluet</button>
             </div>
           </div>
-          <div class="row"><label for="tColors">Jumlah warna</label><div class="ctl"><input id="tColors" type="range" min="1" max="32" step="1" value="10"><output for="tColors" id="oColors"></output></div></div>
-          <div class="row"><label for="tSmooth">Penghalusan tepi</label><div class="ctl"><input id="tSmooth" type="range" min="0" max="3" step="0.1" value="1"><output for="tSmooth" id="oSmooth"></output></div></div>
-          <div class="row"><label for="tTol">Toleransi kurva (px)</label><div class="ctl"><input id="tTol" type="range" min="0.2" max="4" step="0.1" value="1"><output for="tTol" id="oTol"></output></div></div>
-          <div class="row"><label for="tSpeck">Buang bintik kecil (px²)</label><div class="ctl"><input id="tSpeck" type="range" min="0" max="300" step="1" value="16"><output for="tSpeck" id="oSpeck"></output></div></div>
+          <div class="row"><label for="tColors">Jumlah warna (maksimum)</label><div class="ctl"><input id="tColors" type="range" min="1" max="32" step="1" value="10"><output for="tColors" id="oColors"></output></div></div>
+          <div class="row"><label for="tSmooth">Penghalusan tepi</label><div class="ctl"><input id="tSmooth" type="range" min="0" max="3" step="0.1" value="0.6"><output for="tSmooth" id="oSmooth"></output></div></div>
+          <div class="row"><label for="tTol">Toleransi kurva (px)</label><div class="ctl"><input id="tTol" type="range" min="0.2" max="4" step="0.1" value="0.7"><output for="tTol" id="oTol"></output></div></div>
+          <div class="row"><label for="tSpeck">Buang bintik kecil (px²)</label><div class="ctl"><input id="tSpeck" type="range" min="0" max="300" step="1" value="6"><output for="tSpeck" id="oSpeck"></output></div></div>
           <div class="row"><label for="tCorner">Sudut dianggap tajam (°)</label><div class="ctl"><input id="tCorner" type="range" min="30" max="120" step="5" value="60"><output for="tCorner" id="oCorner"></output></div></div>
           <div class="row"><label for="tRes">Resolusi proses</label>
-            <select class="field" id="tRes"><option value="512">512 px (cepat)</option><option value="768">768 px</option><option value="1024" selected>1024 px</option><option value="1536">1536 px (detail, lambat)</option></select>
+            <select class="field" id="tRes"><option value="512">512 px (cepat)</option><option value="768">768 px</option><option value="1024">1024 px</option><option value="1536" selected>1536 px (presisi, lebih lama)</option></select>
           </div>
-          <label class="chk"><input id="tStack" type="checkbox" checked><span>Tumpuk layer<small>Layer belakang menutup celah antar warna dan jumlah node lebih sedikit.</small></span></label>
+          <label class="chk"><input id="tSplit" type="checkbox" checked><span>Satu layer per bentuk<small>Tiap bentuk (kelopak, bintik, garis tepi) jadi layer sendiri dan bisa digerakkan terpisah.</small></span></label>
+          <label class="chk"><input id="tStack" type="checkbox"><span>Tumpuk layer<small>Nyalakan hanya jika ingin layer saling menutup. Biarkan mati agar kontur terpisah dan tidak menutupi bentuk lain.</small></span></label>
+          <div class="row"><label for="tThin">Bersihkan tepi tipis (px)</label><div class="ctl"><input id="tThin" type="range" min="0" max="2" step="1" value="1"><output for="tThin" id="oThin"></output></div></div>
+          <div class="row"><label for="tGap">Rapatkan celah antar warna</label><div class="ctl"><input id="tGap" type="range" min="0" max="4" step="0.5" value="1.5"><output for="tGap" id="oGap"></output></div></div>
           <label class="chk"><input id="tDenoise" type="checkbox"><span>Kurangi noise<small>Untuk foto atau JPG yang berbintik.</small></span></label>
           <label class="chk"><input id="tBgRemove" type="checkbox"><span>Hapus latar polos<small>Warna di tepi gambar yang tersambung ke pinggir dibuang.</small></span></label>
           <div class="row" id="bgTolRow" hidden><label for="tBgTol">Toleransi warna latar</label><div class="ctl"><input id="tBgTol" type="range" min="5" max="140" step="1" value="48"><output for="tBgTol" id="oBgTol"></output></div></div>
@@ -344,7 +354,7 @@ const LV=(()=>{
     }
     return o;
   }
-  function quantize(d,W,H,k,removed,denoise){
+  function quantize(d,W,H,k,removed,denoise,thin){
     const N=W*H,src=denoise?boxBlurRGB(d,W,H):d;
     const labels=new Int16Array(N).fill(-1);
     let cnt=0;const opaque=new Uint8Array(N);
@@ -393,7 +403,89 @@ const LV=(()=>{
     const map=new Int16Array(kk).fill(-1),palette=[],counts=[];
     for(let j=0;j<kk;j++)if(num[j]){map[j]=palette.length;palette.push([Math.round(sum[j*3]/num[j]),Math.round(sum[j*3+1]/num[j]),Math.round(sum[j*3+2]/num[j])]);counts.push(num[j])}
     for(let p=0;p<N;p++)if(labels[p]>=0)labels[p]=map[labels[p]];
-    return{labels,palette,counts};
+    return cleanLabels(labels,palette,counts,src,W,H,cnt,thin||0);
+  }
+
+  /* warna yang nyaris sama digabung; warna transisi tepi (antialiasing) dibuang; piksel yatim dirapikan */
+  function cleanLabels(labels,palette,counts,src,W,H,total,thin){
+    const N=W*H,n0=palette.length;
+    const wd=(a,b)=>Math.sqrt(.30*(a[0]-b[0])**2+.59*(a[1]-b[1])**2+.11*(a[2]-b[2])**2);
+    const pal=palette.map(c=>c.slice()),cn=counts.slice(),alive=pal.map(()=>true),to=pal.map((_,i)=>i);
+    const find=i=>{while(to[i]!==i)i=to[i];return i};
+    for(let again=true;again;){
+      again=false;
+      for(let i=0;i<n0&&!again;i++){if(!alive[i])continue;
+        for(let j=i+1;j<n0;j++){if(!alive[j])continue;
+          if(wd(pal[i],pal[j])<6){
+            const a=cn[i]>=cn[j]?i:j,b=a===i?j:i,t=cn[a]+cn[b];
+            for(let k=0;k<3;k++)pal[a][k]=(pal[a][k]*cn[a]+pal[b][k]*cn[b])/t;
+            cn[a]=t;alive[b]=false;to[b]=a;again=true;break;
+          }
+        }
+      }
+    }
+    const segD=(p,a,b)=>{const ab=[b[0]-a[0],b[1]-a[1],b[2]-a[2]],ap=[p[0]-a[0],p[1]-a[1],p[2]-a[2]];const l=ab[0]*ab[0]+ab[1]*ab[1]+ab[2]*ab[2];let t=l?(ap[0]*ab[0]+ap[1]*ab[1]+ap[2]*ab[2])/l:0;t=Math.max(0,Math.min(1,t));return wd(p,[a[0]+ab[0]*t,a[1]+ab[1]*t,a[2]+ab[2]*t])};
+    const fringe=new Set(),order=[];
+    for(let i=0;i<n0;i++)if(alive[i])order.push(i);
+    order.sort((a,b)=>cn[a]-cn[b]);
+    for(const i of order){
+      if(cn[i]>total*.015)break;
+      const others=order.filter(k=>k!==i&&alive[k]&&!fringe.has(k)&&cn[k]>cn[i]);
+      let hit=false;
+      for(let x=0;x<others.length&&!hit;x++)for(let y=x+1;y<others.length;y++){if(segD(pal[i],pal[others[x]],pal[others[y]])<14){hit=true;break}}
+      if(hit&&others.length>=2)fringe.add(i);
+    }
+    const keep=[];for(let i=0;i<n0;i++)if(alive[i]&&!fringe.has(i))keep.push(i);
+    const nearest=(r,g,b)=>{let bi=keep[0],bv=Infinity;for(const k of keep){const c=pal[k],v=.30*(r-c[0])**2+.59*(g-c[1])**2+.11*(b-c[2])**2;if(v<bv){bv=v;bi=k}}return bi};
+    const idx=new Int16Array(n0).fill(-1);keep.forEach((k,j)=>idx[k]=j);
+    for(let p=0;p<N;p++){
+      const l=labels[p];if(l<0)continue;
+      const f=find(l);
+      if(idx[f]>=0)labels[p]=idx[f];
+      else{const q=p*4;labels[p]=idx[nearest(src[q],src[q+1],src[q+2])]}
+    }
+    /* garis/pita tipis (<= 2*thin px) dilebur ke wilayah tetangga terdekat: ini piksel transisi antialiasing */
+    if(thin>0)thinClean(labels,W,H,thin);
+    /* piksel yatim dan garis selebar 1 px mengikuti tetangganya */
+    for(let it=0;it<2;it++){
+      const cp=labels.slice();
+      for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){
+        const p=y*W+x,me=cp[p];if(me<0)continue;
+        const nb=[cp[p-W-1],cp[p-W],cp[p-W+1],cp[p-1],cp[p+1],cp[p+W-1],cp[p+W],cp[p+W+1]];
+        let same=0;for(const v of nb)if(v===me)same++;
+        if(same>2)continue;
+        let best=-1,bv=0;
+        for(let a=0;a<8;a++){const v=nb[a];if(v<0||v===me)continue;let c=0;for(let b=0;b<8;b++)if(nb[b]===v)c++;if(c>bv){bv=c;best=v}}
+        if(best>=0&&bv>=3)labels[p]=best;
+      }
+    }
+    const palette2=keep.map(k=>pal[k].map(Math.round)),cts=new Array(keep.length).fill(0);
+    for(let p=0;p<N;p++)if(labels[p]>=0)cts[labels[p]]++;
+    return{labels,palette:palette2,counts:cts};
+  }
+
+  function thinClean(labels,W,H,r){
+    const N=W*H,inner=new Uint8Array(N),keep=new Uint8Array(N);
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+      const p=y*W+x,me=labels[p];let ok=true;
+      for(let dy=-r;dy<=r&&ok;dy++){const yy=y+dy;if(yy<0||yy>=H)continue;for(let dx=-r;dx<=r;dx++){const xx=x+dx;if(xx<0||xx>=W)continue;if(labels[yy*W+xx]!==me){ok=false;break}}}
+      inner[p]=ok?1:0;
+    }
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+      const p=y*W+x,me=labels[p];
+      if(me<0||inner[p]){keep[p]=1;continue}
+      let ok=false;
+      for(let dy=-r;dy<=r&&!ok;dy++){const yy=y+dy;if(yy<0||yy>=H)continue;for(let dx=-r;dx<=r;dx++){const xx=x+dx;if(xx<0||xx>=W)continue;const q=yy*W+xx;if(inner[q]&&labels[q]===me){ok=true;break}}}
+      keep[p]=ok?1:0;
+    }
+    const out=labels.slice(),q=new Int32Array(N);let qh=0,qt=0;
+    for(let p=0;p<N;p++)if(keep[p]&&labels[p]>=0)q[qt++]=p;
+    const seen=keep.slice();
+    while(qh<qt){
+      const p=q[qh++],x=p%W,y=(p/W)|0;
+      for(let dy=-1;dy<=1;dy++){const yy=y+dy;if(yy<0||yy>=H)continue;for(let dx=-1;dx<=1;dx++){const xx=x+dx;if(xx<0||xx>=W)continue;const n=yy*W+xx;if(seen[n]||labels[n]<0)continue;seen[n]=1;out[n]=out[p];q[qt++]=n}}
+    }
+    labels.set(out);
   }
 
   /* ---------- gaussian blur on a padded float grid ---------- */
@@ -409,16 +501,16 @@ const LV=(()=>{
   /* ---------- marching squares -> closed loops (inside on the left) ---------- */
   const T=0,Rr=1,B=2,L=3;
   const CASES=[null,[[B,L]],[[Rr,B]],[[Rr,L]],[[T,Rr]],'s5',[[T,B]],[[T,L]],[[L,T]],[[B,T]],'s10',[[Rr,T]],[[L,Rr]],[[B,Rr]],[[L,B]],null];
-  function marching(v,W,H,next){
+  function marching(v,W,H,next,thr){
     const vBase=W*H,froms=[];
     for(let y=0;y<H-1;y++){
       for(let x=0;x<W-1;x++){
-        const i=y*W+x,a=v[i]>=.5?1:0,b=v[i+1]>=.5?1:0,c=v[i+W+1]>=.5?1:0,d=v[i+W]>=.5?1:0;
+        const i=y*W+x,a=v[i]>=thr?1:0,b=v[i+1]>=thr?1:0,c=v[i+W+1]>=thr?1:0,d=v[i+W]>=thr?1:0;
         const idx=(a<<3)|(b<<2)|(c<<1)|d;
         if(idx===0||idx===15)continue;
         let segs=CASES[idx];
         if(idx===5||idx===10){
-          const ctr=(v[i]+v[i+1]+v[i+W]+v[i+W+1])/4>=.5;
+          const ctr=(v[i]+v[i+1]+v[i+W]+v[i+W+1])/4>=thr;
           segs=idx===5?(ctr?[[T,L],[B,Rr]]:[[T,Rr],[B,L]]):(ctr?[[Rr,T],[L,B]]:[[L,T],[Rr,B]]);
         }
         const eT=i,eB=i+W,eL=vBase+i,eR=vBase+i+1,E=[eT,eR,eB,eL];
@@ -427,8 +519,8 @@ const LV=(()=>{
     }
     const loops=[];
     const pt=e=>{
-      if(e<vBase){const y=(e/W)|0,x=e-y*W,a=v[e],b=v[e+1];return[x+(.5-a)/(b-a)-.5,y-.5]}
-      const q=e-vBase,y=(q/W)|0,x=q-y*W,a=v[q],b=v[q+W];return[x-.5,y+(.5-a)/(b-a)-.5];
+      if(e<vBase){const y=(e/W)|0,x=e-y*W,a=v[e],b=v[e+1];return[x+(thr-a)/(b-a)-.5,y-.5]}
+      const q=e-vBase,y=(q/W)|0,x=q-y*W,a=v[q],b=v[q+W];return[x-.5,y+(thr-a)/(b-a)-.5];
     };
     for(let k=0;k<froms.length;k++){
       const e0=froms[k];if(next[e0]<0)continue;
@@ -553,13 +645,29 @@ const LV=(()=>{
     }
     return{sx,sy,segs};
   }
+  function pip(poly,x,y){let c=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];if((a[1]>y)!==(b[1]>y)&&x<(b[0]-a[0])*(y-a[1])/(b[1]-a[1])+a[0])c=!c}return c}
+  /* kelompokkan kontur: tiap kontur luar + lubang di dalamnya jadi satu bentuk */
+  function splitShapes(items){
+    if(!items.length)return[];
+    let big=items[0];for(const it of items)if(Math.abs(it.area)>Math.abs(big.area))big=it;
+    const sg=Math.sign(big.area),shapes=[],holes=[];
+    for(const it of items){if(Math.sign(it.area)===sg)shapes.push({loops:[it],area:Math.abs(it.area)});else holes.push(it)}
+    for(const h of holes){
+      let best=-1,ba=Infinity;
+      for(let i=0;i<shapes.length;i++){const o=shapes[i].loops[0];
+        if(shapes[i].area>Math.abs(h.area)&&shapes[i].area<ba&&pip(o.pts,h.pts[0][0],h.pts[0][1])){best=i;ba=shapes[i].area}}
+      if(best>=0)shapes[best].loops.push(h);else shapes.push({loops:[h],area:Math.abs(h.area)});
+    }
+    shapes.sort((a,b)=>b.area-a.area);
+    return shapes;
+  }
 
   /* ---------- full pipeline ---------- */
   const hex=c=>'#'+c.map(v=>v.toString(16).padStart(2,'0')).join('').toUpperCase();
   async function traceImage(img,st,onProgress,cancelled){
     const{data,width:W,height:H}=img;
     const removed=st.bgRemove?removeBackground(data,W,H,st.bgTol):null;
-    const q=quantize(data,W,H,st.colors,removed,st.denoise);
+    const q=quantize(data,W,H,st.colors,removed,st.denoise,st.thin);
     const order=q.palette.map((_,i)=>i).sort((a,b)=>q.counts[b]-q.counts[a]);
     const rank=new Int16Array(order.length);order.forEach((ci,r)=>rank[ci]=r);
     const GW=W+2,GH=H+2,val=new Float32Array(GW*GH),tmp=new Float32Array(GW*GH),next=new Int32Array(2*GW*GH).fill(-1);
@@ -571,13 +679,21 @@ const LV=(()=>{
       const ci=order[r];val.fill(0);
       for(let y=0;y<H;y++){const o=(y+1)*GW+1,lo=y*W;for(let x=0;x<W;x++){const lab=q.labels[lo+x];if(lab<0)continue;if(st.stack?rank[lab]>=r:lab===ci)val[o+x]=1}}
       blur(val,tmp,GW,GH,st.smooth);
-      const loops=marching(val,GW,GH,next),out=[];let nodes=0;
+      const loops=marching(val,GW,GH,next,st.stack?.5:Math.max(.25,.5-.06*(st.gap||0))),out=[];let nodes=0;
       for(const pts of loops){
         if(Math.abs(polyArea(pts))<st.minArea)continue;
         const f=fitLoop(pts,st.tol*.6,st.corner,st.smooth>=0.2);
-        if(f&&f.segs.length){out.push(f);nodes+=f.segs.length+1}
+        if(f&&f.segs.length){f.area=polyArea(pts);f.pts=pts;out.push(f);nodes+=f.segs.length+1}
       }
-      if(out.length)layers.push({rgb:q.palette[ci],hex:hex(q.palette[ci]),loops:out,nodes,pixels:q.counts[ci],on:true});
+      if(!out.length)continue;
+      if(st.split){
+        for(const sh of splitShapes(out)){
+          const nd=sh.loops.reduce((a,l)=>a+l.segs.length+1,0);
+          layers.push({rgb:q.palette[ci],hex:hex(q.palette[ci]),loops:sh.loops.map(l=>({sx:l.sx,sy:l.sy,segs:l.segs})),nodes:nd,pixels:q.counts[ci],on:true});
+        }
+      }else{
+        layers.push({rgb:q.palette[ci],hex:hex(q.palette[ci]),loops:out.map(l=>({sx:l.sx,sy:l.sy,segs:l.segs})),nodes,pixels:q.counts[ci],on:true});
+      }
     }
     onProgress(order.length,order.length);
     return{pw:W,ph:H,layers};
@@ -672,10 +788,10 @@ const LV=(()=>{
 const $=id=>document.getElementById(id);
 const S={src:null,srcVector:false,name:'',imgData:null,dataUrl:'',trace:null,tab:'vector',nameDirty:false,run:0,view:{cx:0,cy:0,z:1},xmlCache:null,dl:null};
 const PRESETS={
-  logo:{colors:6,smooth:.6,tol:.8,speck:10,corner:55,stack:true,denoise:false,bgRemove:false},
-  ilus:{colors:10,smooth:1,tol:1,speck:16,corner:60,stack:true,denoise:false,bgRemove:false},
-  foto:{colors:24,smooth:1.4,tol:1.6,speck:30,corner:70,stack:true,denoise:true,bgRemove:false},
-  siluet:{colors:1,smooth:1,tol:.8,speck:20,corner:60,stack:false,denoise:true,bgRemove:true}
+  logo:{colors:6,smooth:.5,tol:.6,speck:6,corner:55,stack:false,split:true,gap:1.5,thin:1,denoise:false,bgRemove:false},
+  ilus:{colors:10,smooth:.6,tol:.7,speck:6,corner:60,stack:false,split:true,gap:1.5,thin:1,denoise:false,bgRemove:false},
+  foto:{colors:24,smooth:1.2,tol:1.4,speck:24,corner:70,stack:true,split:false,gap:0,thin:1,denoise:true,bgRemove:false},
+  siluet:{colors:1,smooth:1,tol:.7,speck:12,corner:60,stack:false,split:false,gap:0,thin:1,denoise:true,bgRemove:true}
 };
 const nf=n=>n.toLocaleString('id-ID');
 let toastT=0;
@@ -692,7 +808,7 @@ function proj(){
     fit:$('fFit').value,pct:+$('fScale').value,origin:$('oOrigin').value,label:($('oLabel').value.trim()||'Trace'),
     stagger:$('oStagger').checked,staggerMs:Math.max(0,+$('oStaggerMs').value||0)};
 }
-function traceSettings(){return{colors:+$('tColors').value,smooth:+$('tSmooth').value,tol:+$('tTol').value,minArea:+$('tSpeck').value,corner:+$('tCorner').value,stack:$('tStack').checked,denoise:$('tDenoise').checked,bgRemove:$('tBgRemove').checked,bgTol:+$('tBgTol').value}}
+function traceSettings(){return{colors:+$('tColors').value,smooth:+$('tSmooth').value,tol:+$('tTol').value,minArea:+$('tSpeck').value,corner:+$('tCorner').value,stack:$('tStack').checked,split:$('tSplit').checked,gap:+$('tGap').value,thin:+$('tThin').value,denoise:$('tDenoise').checked,bgRemove:$('tBgRemove').checked,bgTol:+$('tBgTol').value}}
 function syncOutputs(){
   $('oColors').textContent=$('tColors').value;
   $('oSmooth').textContent=(+$('tSmooth').value).toFixed(1);
@@ -700,6 +816,8 @@ function syncOutputs(){
   $('oSpeck').textContent=$('tSpeck').value;
   $('oCorner').textContent=$('tCorner').value+'°';
   $('oBgTol').textContent=$('tBgTol').value;
+  $('oGap').textContent=(+$('tGap').value).toFixed(1);
+  $('oThin').textContent=$('tThin').value;
   $('oScale').textContent=$('fScale').value+'%';
   $('bgTolRow').hidden=!$('tBgRemove').checked;
   $('staggerRow').hidden=!$('oStagger').checked;
@@ -709,7 +827,7 @@ function syncOutputs(){
 function applyPreset(k){
   const p=PRESETS[k];
   $('tColors').value=p.colors;$('tSmooth').value=p.smooth;$('tTol').value=p.tol;$('tSpeck').value=p.speck;$('tCorner').value=p.corner;
-  $('tStack').checked=p.stack;$('tDenoise').checked=p.denoise;$('tBgRemove').checked=p.bgRemove;
+  $('tStack').checked=p.stack;$('tSplit').checked=p.split;$('tGap').value=p.gap;$('tThin').value=p.thin;$('tDenoise').checked=p.denoise;$('tBgRemove').checked=p.bgRemove;
   document.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.preset===k)));
   syncOutputs();
 }
@@ -730,7 +848,20 @@ function setSource(src,name,vector,label,sample){
   S.isSample=!!sample;S.src=src;S.srcVector=vector;S.name=name;
   $('srcName').textContent=label||name;
   if(!S.nameDirty&&!S.isSample)$('pName').value=name||'Lavern Trace';
-  prepareImage();runTrace();
+  prepareImage();
+  const bgAuto=detectPlainBg();
+  $('tBgRemove').checked=bgAuto;syncOutputs();
+  if(bgAuto)toast('Latar polos terdeteksi dan dihapus otomatis. Matikan di pengaturan jika tidak diinginkan.');
+  runTrace();
+}
+function detectPlainBg(){
+  const d=S.imgData;if(!d)return false;
+  const W=d.width,H=d.height,a=d.data,h=new Map();let n=0,op=0;
+  const add=(x,y)=>{const i=(y*W+x)*4;n++;if(a[i+3]>=128){op++;const k=((a[i]>>3)<<10)|((a[i+1]>>3)<<5)|(a[i+2]>>3);h.set(k,(h.get(k)||0)+1)}};
+  for(let x=0;x<W;x++){add(x,0);add(x,H-1)}
+  for(let y=1;y<H-1;y++){add(0,y);add(W-1,y)}
+  let mx=0;h.forEach(v=>{if(v>mx)mx=v});
+  return op/n>.98&&mx/Math.max(1,op)>.9;
 }
 async function loadFile(file){
   if(!file)return;
@@ -945,7 +1076,7 @@ function init(){
   };
   document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
   document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{applyPreset(b.dataset.preset);scheduleTrace()});
-  ['tColors','tSmooth','tTol','tSpeck','tCorner','tBgTol','tStack','tDenoise','tBgRemove'].forEach(id=>$(id).addEventListener('input',()=>{
+  ['tColors','tSmooth','tTol','tSpeck','tCorner','tBgTol','tStack','tSplit','tGap','tThin','tDenoise','tBgRemove'].forEach(id=>$(id).addEventListener('input',()=>{
     syncOutputs();document.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed','false'));scheduleTrace()}));
   $('tRes').onchange=()=>{prepareImage();scheduleTrace()};
   ['pSize','pW','pH','pFps','pDur','pBg','pBgCustom','fFit','fScale','oOrigin','oLabel','oStagger','oStaggerMs','pName'].forEach(id=>$(id).addEventListener('input',()=>{
@@ -971,5 +1102,5 @@ init();
 window.__LV=LV;window.__S=S;
 })();
 </script>
-
-</body></html>
+</body>
+</html>
