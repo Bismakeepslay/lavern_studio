@@ -1,14 +1,8 @@
-<!doctype html>
-<html lang="id">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Lavern Studio: auto trace gambar SVG/PNG/JPG menjadi proyek XML untuk Alight Motion.">
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Lavern Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
-<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <style>
 /* Layout: workbench. Settings rail on the left, artboard stage + layer stack + export bar on the right.
    Stage comes first on phones. Palette: lilac-tinted paper, ink, iris (interactive), apricot (anchor points only). */
@@ -143,8 +137,7 @@ details.how li b{color:var(--fg)}
 @keyframes sp{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.spin{animation:none}.bar i{transition:none}}
 </style>
-</head>
-<body>
+
 <div class="shell">
   <header class="top">
     <a class="brand" href="#" aria-label="Lavern Studio">
@@ -304,9 +297,9 @@ details.how li b{color:var(--fg)}
   <footer class="exportbar" id="exportbar">
     <div class="stats" id="stats">Menyiapkan…</div>
     <div class="acts">
-      <button class="btn" id="btnSvg" type="button">SVG</button>
+      <button class="btn" id="btnSvg" type="button">Unduh SVG</button>
       <button class="btn" id="btnCopy" type="button">Salin XML</button>
-      <button class="btn" id="btnZip" type="button" hidden>ZIP</button>
+      <button class="btn" id="btnZip" type="button">Unduh ZIP</button>
       <button class="btn btn-primary" id="btnXml" type="button">Unduh XML</button>
     </div>
     <p class="note" id="dlNote" hidden></p>
@@ -597,17 +590,22 @@ const LV=(()=>{
     sx*=pct/100;sy*=pct/100;
     return{sx,sy,ox:(W-pw*sx)/2,oy:(H-ph*sy)/2};
   }
-  function pathStr(layer,tf){
+  /* am=true: format yang dibaca Alight Motion (M/L/C/Z absolut, "M x y", "C x1 y1, x2 y2, x3 y3", tanpa pemisah antar perintah) */
+  function pathStr(layer,tf,am){
     const o=[];
     for(const lp of layer.loops){
-      let p=tf(lp.sx,lp.sy);o.push('M'+fmt(p[0])+','+fmt(p[1]));
+      let p=tf(lp.sx,lp.sy);o.push(am?'M '+fmt(p[0])+' '+fmt(p[1]):'M'+fmt(p[0])+','+fmt(p[1]));
       for(const s of lp.segs){
-        if(s.length===2){p=tf(s[0],s[1]);o.push('L'+fmt(p[0])+','+fmt(p[1]))}
-        else{const a=tf(s[0],s[1]),b=tf(s[2],s[3]),c=tf(s[4],s[5]);o.push('C'+fmt(a[0])+','+fmt(a[1])+' '+fmt(b[0])+','+fmt(b[1])+' '+fmt(c[0])+','+fmt(c[1]))}
+        if(s.length===2){p=tf(s[0],s[1]);o.push(am?'L '+fmt(p[0])+' '+fmt(p[1]):'L'+fmt(p[0])+','+fmt(p[1]))}
+        else{
+          const a=tf(s[0],s[1]),b=tf(s[2],s[3]),c=tf(s[4],s[5]);
+          o.push(am?'C '+fmt(a[0])+' '+fmt(a[1])+', '+fmt(b[0])+' '+fmt(b[1])+', '+fmt(c[0])+' '+fmt(c[1])
+                   :'C'+fmt(a[0])+','+fmt(a[1])+' '+fmt(b[0])+','+fmt(b[1])+' '+fmt(c[0])+','+fmt(c[1]));
+        }
       }
       o.push('Z');
     }
-    return o.join(' ');
+    return o.join(am?'':' ');
   }
   const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
   function buildXML(trace,P){
@@ -624,14 +622,12 @@ const LV=(()=>{
       if(!l.on)continue;
       n++;
       const st=stagger?Math.min(total-100,(n-1)*staggerMs):0;
-      o.push('  <shape id="'+(id++)+'" label="'+esc(label+' '+n)+'" startTime="'+st+'" endTime="'+total+'" fillType="color">');
+      o.push('  <shape id="'+(id++)+'" label="'+esc(label+' '+n)+'" startTime="'+st+'" endTime="'+total+'" fillType="color" mediaFillMode="fill">');
       o.push('    <transform>');
-      o.push('      <location value="'+cx.toFixed(6)+','+cy.toFixed(6)+',0.000000"/>');
+      o.push('      <location value="'+cx.toFixed(6)+','+cy.toFixed(6)+',0.000000" />');
       o.push('    </transform>');
-      o.push('    <fillColor value="#FF'+l.hex.slice(1)+'"/>');
-      o.push('    <parameter>');
-      o.push('      <contour d="'+pathStr(l,tf)+'"/>');
-      o.push('    </parameter>');
+      o.push('    <fillColor value="#FF'+l.hex.slice(1)+'" />');
+      o.push('    <path d="'+pathStr(l,tf,true)+'" />');
       o.push('  </shape>');
     }
     o.push('</scene>');
@@ -912,17 +908,17 @@ function bindStage(){
 /* ---- downloads ---- */
 async function detectDl(){
   try{if(window.claude&&typeof window.claude.use==='function')S.dl=await window.claude.use('downloads')}catch(e){S.dl=null}
-  const hosted=!!S.dl;
-  $('btnXml').textContent=hosted?'Unduh ZIP (berisi XML)':'Unduh XML';
-  $('btnZip').hidden=hosted;
   const n=$('dlNote');
-  if(hosted){n.hidden=false;n.textContent='Tampilan ini hanya mengizinkan beberapa jenis file, jadi XML dikemas dalam ZIP. Ekstrak dulu, lalu import file .xml di Alight Motion.'}
+  if(S.dl){n.hidden=false;n.textContent='Di tampilan ini, unduhan .xml bisa ditolak oleh sistem. Jika itu terjadi, pakai Unduh ZIP (berisi file .xml, ekstrak dulu) atau buka versi hosting sendiri.'}
 }
 const safe=s=>s.replace(/[\\/:*?"<>|]+/g,'-').replace(/\s+/g,' ').trim()||'lavern-trace';
 async function deliver(filename,blob){
   if(S.dl){
     try{await S.dl.save({filename,data:blob});toast('Tersimpan: '+filename)}
-    catch(e){toast(e&&e.code==='declined'?'Unduhan dibatalkan.':'Unduhan tidak tersedia di tampilan ini. Pakai Salin XML.')}
+    catch(e){
+      const c=e&&e.code;
+      toast(c==='declined'?'Unduhan dibatalkan.':(c==='rejected_extension'||c==='extension_not_enabled')?'Tampilan ini menolak file '+filename.split('.').pop()+'. Pakai Unduh ZIP.':'Unduhan tidak tersedia di tampilan ini. Pakai Salin XML.');
+    }
     return;
   }
   const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),5000);
@@ -957,9 +953,7 @@ function init(){
     syncOutputs();S.view.fresh=(id==='pSize'||id==='pW'||id==='pH')||S.view.fresh;contentChanged()}));
   $('btnXml').onclick=async()=>{
     if(!S.trace)return;
-    const base=safe(proj().title);
-    if(S.dl)await deliver(base+'.zip',zipBlob());
-    else await deliver(base+'.xml',new Blob([getXML()],{type:'application/xml'}));
+    await deliver(safe(proj().title)+'.xml',new Blob([getXML()],{type:'application/xml'}));
   };
   $('btnZip').onclick=()=>deliver(safe(proj().title)+'.zip',zipBlob());
   $('btnSvg').onclick=()=>deliver(safe(proj().title)+'.svg',new Blob([LV.buildSVG(S.trace,proj())],{type:'image/svg+xml'}));
@@ -977,5 +971,5 @@ init();
 window.__LV=LV;window.__S=S;
 })();
 </script>
-</body>
-</html>
+
+</body></html>
